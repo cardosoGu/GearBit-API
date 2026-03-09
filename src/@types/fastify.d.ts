@@ -5,6 +5,7 @@ declare module 'fastify' {
     user: {
       id: string;
       sessionId: string;
+      isAdmin: boolean;
     };
   }
 }

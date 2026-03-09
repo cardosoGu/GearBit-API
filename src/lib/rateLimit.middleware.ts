@@ -4,7 +4,7 @@ import {
   createRateLimit,
   incrementRateLimit,
   resetRateLimit,
-} from '../auth/repositories/auth.repository';
+} from '../modules/auth/repositories/auth.repository';
 
 const RATE_LIMIT_CONFIG: Record<string, { maxHits: number; windowMs: number }> = {
   '/api/auth/register': { maxHits: 5, windowMs: 60 * 60 * 1000 },

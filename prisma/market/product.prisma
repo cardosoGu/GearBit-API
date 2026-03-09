@@ -1,0 +1,12 @@
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  stockQuantity Int
+  price       Float
+  imageUrl    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  orderItems  OrderItem[]
+}

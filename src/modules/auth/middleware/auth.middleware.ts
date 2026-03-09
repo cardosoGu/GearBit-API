@@ -22,8 +22,9 @@ export async function authMiddleware(request: FastifyRequest, reply: FastifyRepl
       return reply.status(401).send({ success: false, message: 'Session not found' });
     }
 
+
     // Pass user and session to controllers
-    request.user = { id: payload.sub, sessionId: session.id };
+    request.user = { id: payload.sub, sessionId: session.id, isAdmin: session.user.role === 'ADMIN' };
   } catch {
     return reply.status(401).send({ success: false, message: 'Invalid or expired token' });
   }

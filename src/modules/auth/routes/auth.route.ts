@@ -8,7 +8,7 @@ import { refreshController } from '../controllers/refreshController.js';
 import { logoutController } from '../controllers/logoutController.js';
 import { notLoggedMiddleware } from '../middleware/notLogged.middleware.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import { rateLimitMiddleware } from '../../rateLimit/rateLimit.middleware.js';
+import { rateLimitMiddleware } from '../../../lib/rateLimit.middleware.js';
 import { meController } from '../controllers/meController.js';
 
 export async function authRoutes(app: FastifyInstance) {

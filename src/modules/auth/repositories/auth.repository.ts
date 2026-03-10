@@ -1,3 +1,4 @@
+import { config } from 'node:process';
 import prisma from '../../../lib/prisma.js';
 
 // ===== USER =====
@@ -118,8 +119,12 @@ export async function findRateLimit(clientIp: string, route: string) {
   });
 }
 
-export async function createRateLimit(data: { clientIp: string; route: string; expiresAt: Date }) {
-  return prisma.rateLimit.create({ data: { ...data, hits: 1 } });
+export async function updateOrCreateRateLimit(data: { clientIp: string, route: string, expiresAt: Date }) {
+  return await prisma.rateLimit.upsert({
+    where: { clientIp_route: { clientIp: data.clientIp, route: data.route } },
+    create: { clientIp: data.clientIp, route: data.route, hits: 1, expiresAt: data.expiresAt },
+    update: { hits: { increment: 1 }, expiresAt: data.expiresAt },
+  });
 }
 
 export async function incrementRateLimit(clientIp: string, route: string) {

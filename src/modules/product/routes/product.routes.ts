@@ -14,20 +14,20 @@ export async function productRoutes(app: FastifyInstance) {
   // TODO: IMPLEMENTAR FILTRO DE ADMIN PARA CREATE, UPDATE E DELETE PRODUCTS
   app.post(
     "/",
-    { schema: { body: createProductSchema }, preHandler: authMiddleware },
+    { schema: { body: createProductSchema, tags: ['products'], description: 'Create a new product' }, preHandler: authMiddleware },
     createProductController,
   );
   //update product
   app.put(
     "/:id",
-    { schema: { body: updateProductSchema }, preHandler: authMiddleware },
+    { schema: { body: updateProductSchema, tags: ['products'], description: 'Update a product' }, preHandler: authMiddleware },
     updateProductController,
   );
   //delete product
-  app.delete("/:id", { preHandler: authMiddleware }, deleteProductController);
+  app.delete("/:id", { schema: { tags: ['products'], description: 'Delete a product' }, preHandler: authMiddleware }, deleteProductController);
 
   //Get all products
-  app.get("/", { preHandler: authMiddleware }, productsController);
+  app.get("/", { schema: { tags: ['products'], description: 'Get all products' }, preHandler: authMiddleware }, productsController);
   //Get product by id
-  app.get("/:id", { preHandler: authMiddleware }, productController);
+  app.get("/:id", { schema: { tags: ['products'], description: 'Get product by id' }, preHandler: authMiddleware }, productController);
 }

@@ -1,9 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import {
   findRateLimit,
-  createRateLimit,
-  incrementRateLimit,
   resetRateLimit,
+  updateOrCreateRateLimit,
 } from '../modules/auth/repositories/auth.repository';
 
 const RATE_LIMIT_CONFIG: Record<string, { maxHits: number; windowMs: number }> = {
@@ -14,6 +13,8 @@ const RATE_LIMIT_CONFIG: Record<string, { maxHits: number; windowMs: number }> =
 };
 
 export async function rateLimitMiddleware(request: FastifyRequest, reply: FastifyReply) {
+if (process.env.NODE_ENV === 'test') return;  
+
   const route = request.routeOptions.url ?? request.url;
   const config = RATE_LIMIT_CONFIG[route];
 
@@ -24,23 +25,18 @@ export async function rateLimitMiddleware(request: FastifyRequest, reply: Fastif
 
   const existing = await findRateLimit(clientIp, route);
 
-  let hits = 1;
-
-  if (!existing) {
-    await createRateLimit({
-      clientIp,
-      route,
-      expiresAt: new Date(now.getTime() + config.windowMs),
-    });
-  } else if (existing.expiresAt < now) {
+  if (existing && existing?.expiresAt < now) {
     await resetRateLimit(clientIp, route, new Date(now.getTime() + config.windowMs));
-  } else {
-    const updated = await incrementRateLimit(clientIp, route);
-    hits = updated.hits;
   }
 
-  if (hits > config.maxHits) {
-    const retryAfter = Math.ceil((existing!.expiresAt.getTime() - now.getTime()) / 1000);
+  const rateLimit = await updateOrCreateRateLimit({
+    clientIp,
+    route,
+    expiresAt: new Date(now.getTime() + config.windowMs),
+  });
+
+  if (rateLimit.hits > config.maxHits) {
+    const retryAfter = Math.ceil((rateLimit!.expiresAt.getTime() - now.getTime()) / 1000);
     return reply.status(429).send({
       success: false,
       message: 'Too many requests. Try again later.',

@@ -22,7 +22,7 @@ export const verifySchema = z.object({
 
 export const loginSchema = z.object({
   email: z.string().email().toLowerCase().trim(),
-  password: passwordSchema,
+  password: z.string(),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

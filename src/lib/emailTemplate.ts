@@ -12,12 +12,12 @@ export function verificationCodeTemplate(code: string): string {
     <tr>
       <td align="center">
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-          
+
           <!-- Header -->
           <tr>
             <td style="background-color:#111827;padding:32px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:0.5px;">
-                Auth Service
+              <h1 style="margin:0;color:#ffffff;font-size:35px;font-weight:700;letter-spacing:0.5px;">
+                GearBit
               </h1>
             </td>
           </tr>
@@ -49,7 +49,7 @@ export function verificationCodeTemplate(code: string): string {
           <tr>
             <td style="background-color:#f9fafb;border-top:1px solid #e5e7eb;padding:20px 32px;text-align:center;">
               <p style="margin:0;color:#9ca3af;font-size:12px;">
-                © ${new Date().getFullYear()} Auth Service. Todos os direitos reservados.
+                © ${new Date().getFullYear()} Gearbit. Todos os direitos reservados.
               </p>
             </td>
           </tr>

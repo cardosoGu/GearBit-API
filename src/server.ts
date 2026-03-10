@@ -4,7 +4,7 @@ import { env } from './config/env.js';
 
 const banner = `
   ╔═══════════════════════════════════════╗
-  ║           🔐 AUTH SERVICE             ║
+  ║           🔐 GEARBIT API              ║
   ╚═══════════════════════════════════════╝
 `;
 

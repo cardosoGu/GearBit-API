@@ -5,8 +5,8 @@ import prisma from '#database';
 export async function authMiddleware(request: FastifyRequest, reply: FastifyReply) {
   const accessToken = request.cookies['accessToken'];
 
-  if (!accessToken) {
-    return reply.status(401).send({ success: false, message: 'Unauthorized' });
+  if (!accessToken ) {
+    return reply.status(401).send({ success: false, message: 'Usuario não autenticado' });
   }
 
   try {

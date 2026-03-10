@@ -8,7 +8,7 @@ import {
 
 import {
   createProduct,
-  findUserById,
+
 } from "../repositories/product.repository";
 import { createProductInput, updateProductInput } from "../schemas/product.schema";
 
@@ -25,45 +25,45 @@ export async function createProductController(
   const { id, isAdmin } = req.user as any;
   const { name, description, price, imageUrl, stockQuantity } =
     req.body as createProductInput;
-  try {
 
-    if (!isAdmin) {
-      return reply.status(403).send({ message: "Forbidden: Admins only" });
-    }
 
-    const product = await createProduct(
-      name,
-      description,
-      price,
-      imageUrl,
-      stockQuantity,
-    );
-
-    return reply
-      .status(201)
-      .send({ message: "Product created successfully", product });
-  } catch (error) {
-    console.error("Error creating product:", error);
-    return reply.status(500).send({ message: "Internal server error" });
+  if (!isAdmin) {
+    return reply.status(403).send({ message: "Forbidden: Admins only" });
   }
+
+  const product = await createProduct(
+    name,
+    description,
+    price,
+    imageUrl,
+    stockQuantity,
+  );
+  if(!product) {
+    return reply.status(500).send({ message: "Failed to create product" });
+   }
+
+  return reply
+    .status(201)
+    .send({ message: "Product created successfully", product });
+
 }
 // DELETE PRODUCT
-export async function deleteProductController(req: FastifyRequest, reply: FastifyReply,) {
-  const { id } = req.params as parameters
+export async function deleteProductController(req: FastifyRequest, reply: FastifyReply) {
+  const { id } = req.params as parameters;
   const { isAdmin } = req.user as any;
-  try {
 
-    if (!isAdmin) {
-      return reply.status(403).send({ message: "Forbidden: Admins only" });
-    }
-    await deleteProduct(id)
-
-    return reply.status(200).send({ message: "Product deleted successfully" })
-  } catch (e) {
-    return reply.status(500).send({ message: "Internal server error" })
+  if (!isAdmin) {
+    return reply.status(403).send({ message: 'Forbidden: Admins only' });
   }
-}
 
+  const product = await getProductById(id);
+  if (!product) {
+    return reply.status(404).send({ message: 'Product not found' });
+  }
+
+  await deleteProduct(id);
+  return reply.status(200).send({ message: 'Product deleted successfully' });
+}
 
 // UPDATE PRODUCT
 export async function updateProductController(
@@ -99,7 +99,7 @@ export async function productsController(
 
   return reply
     .status(200)
-    .send({ message: "Products retrieved successfully", products });
+    .send({ message: "product retrieved successfully", products });
 }
 
 // GET PRODUCT BY ID
@@ -109,6 +109,9 @@ export async function productController(
 ) {
   const { id } = req.params as parameters;
   const product = await getProductById(id);
+  if (!product) {
+    return reply.status(404).send({ message: "Product not found" });
+  }
 
   return reply
     .status(200)

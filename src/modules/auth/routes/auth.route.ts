@@ -19,7 +19,7 @@ export async function authRoutes(app: FastifyInstance) {
     '/register',
     {
       preHandler: [rateLimitMiddleware, notLoggedMiddleware],
-      schema: { body: registerSchema },
+      schema: { body: registerSchema, tags: ['auth'], description: 'Register a new user' },
     },
     registerController,
   );
@@ -28,7 +28,7 @@ export async function authRoutes(app: FastifyInstance) {
     '/login',
     {
       preHandler: [rateLimitMiddleware, notLoggedMiddleware],
-      schema: { body: loginSchema },
+      schema: { body: loginSchema, tags: ['auth'], description: 'Login and receive access token' },
     },
     loginController,
   );
@@ -37,13 +37,13 @@ export async function authRoutes(app: FastifyInstance) {
     '/verify',
     {
       preHandler: [rateLimitMiddleware, notLoggedMiddleware],
-      schema: { body: verifySchema },
+      schema: { body: verifySchema, tags: ['auth'], description: 'Verify user email' },
     },
     verifyController,
   );
 
-  router.get('/me', { preHandler: authMiddleware }, meController);
+  router.get('/me', { preHandler: authMiddleware, schema: { tags: ['auth'], description: 'Get current user information' } }, meController);
 
-  router.post('/refresh', { preHandler: [rateLimitMiddleware, authMiddleware] }, refreshController);
-  router.post('/logout', { preHandler: authMiddleware }, logoutController);
+  router.post('/refresh', { preHandler: [rateLimitMiddleware], schema: { tags: ['auth'], description: 'Refresh access token' } }, refreshController);
+  router.post('/logout', { preHandler: authMiddleware, schema: { tags: ['auth'], description: 'Logout user' } }, logoutController);
 }

@@ -11,26 +11,32 @@ export async function notLoggedMiddleware(request: FastifyRequest, reply: Fastif
   // verifica accessToken
   if (accessToken) {
     try {
-      verifyAccessToken(accessToken);
-      return reply.status(400).send({
-        status: 'error',
-        message: 'Você já está autenticado',
-      });
+      const isValid = verifyAccessToken(accessToken);
+      if (isValid) {
+        return reply.status(400).send({
+          success: false,
+          message: 'Usuario já está autenticado',
+        });
+      }
     } catch {
-      // if access = expiresd, verify refresh token
+      // token inválido ou expirado, deixa passar
     }
   }
 
-  // verificy refreshToken
-  if (refreshToken) {
+  //verify refreshToken
+  if (refreshToken && !accessToken) {
     try {
-      verifyRefreshToken(refreshToken);
-      return reply.status(400).send({
-        status: 'error',
-        message: 'Você já está autenticado',
-      });
+      const isValid = verifyRefreshToken(refreshToken);
+      if (isValid) {
+        return reply.status(400).send({
+          success: false,
+          message: 'Usuario já autenticado',
+        });
+      }
     } catch {
-      // refreshToken also expirec, pass
+      // token inválido ou expirado, deixa passar
     }
   }
+
+  return
 }

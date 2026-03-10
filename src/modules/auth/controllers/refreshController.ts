@@ -16,7 +16,8 @@ export async function refreshController(req: FastifyRequest, reply: FastifyReply
   }
 
   try {
-    verifyRefreshToken(refreshToken);
+    const isRefreshTokenValid = verifyRefreshToken(refreshToken);
+
   } catch {
     reply.clearCookie('accessToken', { path: '/' });
     reply.clearCookie('refreshToken', { path: '/' });

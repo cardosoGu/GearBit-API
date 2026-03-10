@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = process.env.NODE_ENV === 'test' ? 1 : 10;
 
 export async function hashPassword(password: string) {
   return await bcrypt.hash(password, SALT_ROUNDS);
@@ -22,3 +22,4 @@ export async function hashCode(code: string) {
 export async function compareCode(code: string, hash: string) {
   return await bcrypt.compare(code, hash);
 }
+

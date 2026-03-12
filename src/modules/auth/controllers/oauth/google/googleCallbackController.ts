@@ -197,7 +197,9 @@ export async function googleCallbackController(
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    return reply.status(200).send({ success: true, message: 'Authenticated successfully' });
+
+
+    return reply.redirect('http://localhost:5173/')
   } catch (error) {
     req.log.error({ err: error }, 'Erro no callback Google');
     return reply.code(500).send({ success: false, message: 'Erro interno.' });

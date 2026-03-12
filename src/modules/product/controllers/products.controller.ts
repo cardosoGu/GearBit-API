@@ -11,6 +11,7 @@ import {
 
 } from "../repositories/product.repository";
 import { createProductInput, updateProductInput } from "../schemas/product.schema";
+import redis from "../../../lib/redis";
 
 type parameters = {
   id: string;
@@ -38,9 +39,14 @@ export async function createProductController(
     imageUrl,
     stockQuantity,
   );
-  if(!product) {
+
+
+  if (!product) {
     return reply.status(500).send({ message: "Failed to create product" });
-   }
+  }
+
+  await redis.del('products')
+  await redis.del(`product:${product.id}`)
 
   return reply
     .status(201)
@@ -62,6 +68,10 @@ export async function deleteProductController(req: FastifyRequest, reply: Fastif
   }
 
   await deleteProduct(id);
+
+  await redis.del('products')
+  await redis.del(`product:${id}`)
+
   return reply.status(200).send({ message: 'Product deleted successfully' });
 }
 
@@ -85,6 +95,9 @@ export async function updateProductController(
 
   const updatedProduct = await updateProduct(id, data);
 
+  await redis.del('products')
+  await redis.del(`product:${id}`)
+
   return reply
     .status(200)
     .send({ message: "Product updated successfully", product: updatedProduct });
@@ -95,8 +108,25 @@ export async function productsController(
   req: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const products = await getAllProducts();
+  const cached = await redis.get('products')
 
+  if (!cached) {
+    const products = await getAllProducts();
+
+    if (!products) {
+      return reply
+        .status(404)
+        .send({ message: "No products avaliable" });
+    }
+
+    await redis.set('products', JSON.stringify(products), 'EX', 60 * 60)
+    return reply
+      .status(200)
+      .send({ message: "product retrieved successfully", products });
+
+  }
+
+  const products = JSON.parse(cached)
   return reply
     .status(200)
     .send({ message: "product retrieved successfully", products });
@@ -108,10 +138,26 @@ export async function productController(
   reply: FastifyReply,
 ) {
   const { id } = req.params as parameters;
-  const product = await getProductById(id);
-  if (!product) {
-    return reply.status(404).send({ message: "Product not found" });
+  const cached = await redis.get(`product:${id}`)
+
+
+  if (!cached) {
+    const product = await getProductById(id);
+
+    if (!product) {
+      return reply
+        .status(404)
+        .send({ message: "Product Not Found" });
+    }
+
+    await redis.set(`product:${id}`, JSON.stringify(product), 'EX', 60 * 60)
+    return reply
+      .status(200)
+      .send({ message: "product retrieved successfully", product });
+
   }
+
+  const product = JSON.parse(cached)
 
   return reply
     .status(200)

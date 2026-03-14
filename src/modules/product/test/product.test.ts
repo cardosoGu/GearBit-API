@@ -17,7 +17,7 @@ beforeAll(async () => {
     vi.spyOn(mailer, 'sendMail').mockResolvedValue({} as any);
 
     // limpa dados de testes anteriores
-    await prisma.product.deleteMany({ where: { name: 'Test Product' } });
+    await prisma.product.deleteMany({ where: { name: { in: ['Test Product', 'Created Product', 'Updated Product'] } } });
     await prisma.session.deleteMany({ where: { user: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } } });
     await prisma.user.deleteMany({ where: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } });
 
@@ -72,6 +72,10 @@ beforeAll(async () => {
             description: 'Test description',
             price: 99.99,
             stockQuantity: 10,
+            weight: 0.5,
+            width: 10,
+            height: 10,
+            length: 10,
         }
     });
 
@@ -100,6 +104,10 @@ describe('POST /api/products', () => {
                 imageUrl: 'http://example.com/image.jpg',
                 price: 49.99,
                 stockQuantity: 5,
+                weight: 0.3,
+                width: 10,
+                height: 10,
+                length: 10,
             }
         });
         expect(response.statusCode).toBe(401);
@@ -115,6 +123,10 @@ describe('POST /api/products', () => {
                 imageUrl: 'http://example.com/image.jpg',
                 price: 49.99,
                 stockQuantity: 5,
+                weight: 0.3,
+                width: 10,
+                height: 10,
+                length: 10,
             },
             cookies: { accessToken }
         });
@@ -141,6 +153,10 @@ describe('POST /api/products', () => {
                 imageUrl: 'http://example.com/image.jpg',
                 price: 49.99,
                 stockQuantity: 5,
+                weight: 0.3,
+                width: 10,
+                height: 10,
+                length: 10,
             },
             cookies: { accessToken: adminToken }
         });
@@ -240,7 +256,7 @@ describe('PUT /api/products/:id', () => {
         const response = await app.inject({
             method: 'PUT',
             url: `/api/products/${productId}`,
-            payload: { name: 'Updated Product', price: 149.99 },
+            payload: { name: 'Updated Product', price: 149.99, weight: 1.0, width: 20, height: 20, length: 20 },
             cookies: { accessToken: adminToken }
         });
         expect(response.statusCode).toBe(200);

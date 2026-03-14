@@ -16,6 +16,7 @@ async function main() {
   console.log(banner);
   app.log.info(`🚀 Server running at http://localhost:${env.PORT}`);
   app.log.info(`📦 Environment: ${env.NODE_ENV}`);
+  app.log.info(`📚 Docs running at http://localhost:${env.PORT}/docs`);
 }
 
 main().catch((err) => {

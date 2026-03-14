@@ -7,6 +7,7 @@ import {
 } from '../../../lib/token.js';
 import { findSessionByRefreshToken, updateSessionTokens } from '../repositories/auth.repository.js';
 import { env } from '../../../config/env.js';
+import prisma from '#database';
 
 export async function refreshController(req: FastifyRequest, reply: FastifyReply) {
   const refreshToken = req.cookies['refreshToken'];

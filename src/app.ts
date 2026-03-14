@@ -2,15 +2,22 @@ import 'dotenv/config';
 import Fastify, { FastifyError } from 'fastify';
 import cookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
-import formbody from '@fastify/formbody'
-import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider
+} from 'fastify-type-provider-zod';
 import { env } from './config/env.js';
 import { authRoutes } from './modules/auth/routes/auth.route.js';
 import { oauthRoutes } from './modules/auth/routes/oauth.route.js';
 import { productRoutes } from './modules/product/routes/product.routes.js';
 import { shippingRoutes } from './modules/shipping/routes/shipping.routes.js';
 import swagger from '@fastify/swagger';
-import swaggerUi from '@fastify/swagger-ui';
+import ScalarApiReference from '@scalar/fastify-api-reference'
+import cors from '@fastify/cors'
+import redis from './lib/redis.js';
+
 
 export async function buildApp() {
   const app = Fastify({
@@ -29,15 +36,16 @@ export async function buildApp() {
           }
           : undefined,
     },
-  });
+  }).withTypeProvider<ZodTypeProvider>();
 
-await app.register(formbody)
 
   // Zod validation
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(helmet);
+  await app.register(helmet, {
+    contentSecurityPolicy: env.NODE_ENV === 'production'
+  });
   await app.register(cookie);
 
   // swagger
@@ -61,7 +69,7 @@ await app.register(formbody)
     transform: jsonSchemaTransform
   })
 
-  await app.register(swaggerUi, {
+  await app.register(ScalarApiReference, {
     routePrefix: '/docs',
   })
 
@@ -88,5 +96,14 @@ await app.register(formbody)
     });
   });
 
+  await app.register(cors, {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  })
+
+
   return app;
 }
+
+

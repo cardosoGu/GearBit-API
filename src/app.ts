@@ -13,9 +13,10 @@ import { authRoutes } from './modules/auth/routes/auth.route.js';
 import { oauthRoutes } from './modules/auth/routes/oauth.route.js';
 import { productRoutes } from './modules/product/routes/product.routes.js';
 import swagger from '@fastify/swagger';
-import ScalarApiReference from '@scalar/fastify-api-reference'
+
 import cors from '@fastify/cors'
 import redis from './lib/redis.js';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 
 
 export async function buildApp() {
@@ -37,6 +38,7 @@ export async function buildApp() {
     },
   }).withTypeProvider<ZodTypeProvider>();
 
+  await redis.del('products')
 
   // Zod validation
   app.setValidatorCompiler(validatorCompiler);
@@ -68,7 +70,7 @@ export async function buildApp() {
     transform: jsonSchemaTransform
   })
 
-  await app.register(ScalarApiReference, {
+  await app.register(fastifySwaggerUi, {
     routePrefix: '/docs',
   })
 

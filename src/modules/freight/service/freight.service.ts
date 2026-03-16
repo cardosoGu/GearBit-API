@@ -2,7 +2,7 @@ import prisma from "#database"
 
 
 
-// TODO: ADICIONAR APOSSUBIR APLICACAO NO AR
+// Usando service de dados ficticios, porque a api de melhorenvio só da para integrar com a api em PROD
 export async function calculateShippingFic(productId: string, cepDestino: string) {
     const product = await prisma.product.findUnique({
         where: { id: productId }

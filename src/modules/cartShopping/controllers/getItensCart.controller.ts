@@ -15,14 +15,14 @@ export async function getItemsCart(req: FastifyRequest, reply: FastifyReply) {
         })
     }
 
-    const completeCart = await findCartWithItems(userCart.id)
+    const products = await findCartWithItems(userCart.id)
 
-    return reply.status(201).send({
+    return reply.status(200).send({
         success: true,
-        message: completeCart ? 'Carinnho do buscado com sucesso' : 'Carrinho do usuario esta vazio',
-        statusCode: 201,
+        message: products ? 'Carinnho do buscado com sucesso' : 'Carrinho do usuario esta vazio',
+        statusCode: 200,
         data: {
-            completeCart
+            products
         }
     })
 

@@ -40,13 +40,13 @@ export async function updateItemCartShoppingService(productId: string, id: strin
         }
     }
 
-    const completeCart = await updateCartItem(userCart.id, productId, updateType)
+    const productUpdated = await updateCartItem(userCart.id, productId, updateType)
     return {
         success: true,
         message: 'Produto atualizado com sucesso!',
         statusCode: 200,
         data: {
-            completeCart
+            product: productUpdated
         }
     }
 

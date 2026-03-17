@@ -11,11 +11,11 @@ export async function deleteItemCart(req: FastifyRequest, reply: FastifyReply) {
     const userCart = await findCartByUserId(id)
 
     if (!product) {
-        return {
+        return reply.status(404).send({
             success: false,
             message: 'Produto nao encontrado no banco de dados',
             statusCode: 404,
-        }
+        })
     }
     if (!userCart) {
         return reply.status(403).send({
@@ -27,11 +27,11 @@ export async function deleteItemCart(req: FastifyRequest, reply: FastifyReply) {
     const cartProduct = await findCartItem(userCart.id, productId)
 
     if (!cartProduct) {
-        return {
+        return reply.status(400).send({
             success: false,
             message: 'Produto nao esta em seu carrinho',
-            statusCode: 404,
-        }
+            statusCode: 400,
+        })
     }
 
     const completeCart = await deleteCartItem(userCart.id, productId)
@@ -40,14 +40,14 @@ export async function deleteItemCart(req: FastifyRequest, reply: FastifyReply) {
         return reply.status(400).send({
             success: false,
             message: 'Erro ao deletar produto do carrinho',
-            statusCode: 201,
+            statusCode: 400,
         })
     }
 
-    return reply.status(201).send({
+    return reply.status(200).send({
         success: true,
         message: 'Produto deletado do carrinho com sucesso!',
-        statusCode: 201,
+        statusCode: 200,
     })
 
 }

@@ -16,10 +16,6 @@ beforeAll(async () => {
     app = await buildApp();
     vi.spyOn(mailer, 'sendMail').mockResolvedValue({} as any);
 
-    // limpa dados de testes anteriores
-    await prisma.product.deleteMany({ where: { name: { in: ['Test Product', 'Created Product', 'Updated Product'] } } });
-    await prisma.session.deleteMany({ where: { user: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } } });
-    await prisma.user.deleteMany({ where: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } });
 
     // cria user normal
     const user = await prisma.user.create({
@@ -85,6 +81,7 @@ beforeAll(async () => {
 afterAll(async () => {
     await app.close();
 
+    await prisma.cartItem.deleteMany({ where: { product: { name: { in: ['Test Product', 'Created Product', 'Updated Product'] } } } });
     await prisma.product.deleteMany({ where: { name: { in: ['Test Product', 'Created Product', 'Updated Product'] } } });
     await prisma.session.deleteMany({ where: { user: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } } });
     await prisma.user.deleteMany({ where: { email: { in: ['product-test@test.com', 'product-admin@test.com'] } } });

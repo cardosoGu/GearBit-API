@@ -19,6 +19,7 @@ import cors from '@fastify/cors'
 import redis from './lib/redis.js';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { cartRoutes } from './modules/cartShopping/routes/cart.routes.js';
+import { orderRoutes } from './modules/orders/routes/order.route.js';
 
 
 export async function buildApp() {
@@ -82,6 +83,7 @@ export async function buildApp() {
   await app.register(oauthRoutes, { prefix: '/api/auth/oauth' });
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(shippingRoutes, { prefix: '/api/shipping' })
+  await app.register(orderRoutes, { prefix: '/api/order' })
 
   // Error handler
   app.setErrorHandler((error: FastifyError, request, reply) => {

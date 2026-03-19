@@ -8,8 +8,8 @@ export async function updateItemCart(req: FastifyRequest, reply: FastifyReply) {
     const { id } = req.user
     const { productId, type } = req.body as updateCartItemInput
 
-    const updatedItem = await updateItemCartShoppingService(productId, id, type)
-    if (!updatedItem) return
+    const products = await updateItemCartShoppingService(productId, id, type)
+    if (!products) return
 
-    return reply.status(updatedItem.statusCode).send(updatedItem)
+    return reply.status(products.statusCode).send(products)
 }

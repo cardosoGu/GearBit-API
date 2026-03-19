@@ -57,6 +57,7 @@ export async function refreshController(req: FastifyRequest, reply: FastifyReply
     sameSite: 'strict',
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
+
   });
 
   reply.setCookie('accessToken', accessToken, {

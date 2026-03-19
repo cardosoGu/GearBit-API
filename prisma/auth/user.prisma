@@ -9,6 +9,7 @@ model User {
   password   String? // nullable pois OAuth não tem senha
   name       String
   avatarUrl  String?
+  cep        String?
   role       UserRole @default(USER)
   provider   String   @default("local")
   providerId String?

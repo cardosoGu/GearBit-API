@@ -22,6 +22,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.string().default('info'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('*'),
+  APP_URL: z.string().url().optional(),
 
   // Google OAuth
   GOOGLE_CLIENT_ID: z.string().min(1),
@@ -34,7 +35,10 @@ const envSchema = z.object({
   GITHUB_CALLBACK_URL: z.string().url(),
 
   MELHOR_ENVIO_TOKEN: z.string(),
-  MELHOR_ENVIO_CEP_ORIGEM: z.string()
+  MELHOR_ENVIO_CEP_ORIGEM: z.string(),
+
+  ASAAS_API_KEY: z.string(),
+  ASAAS_URL: z.string()
 });
 
 export const env = envSchema.parse(process.env);

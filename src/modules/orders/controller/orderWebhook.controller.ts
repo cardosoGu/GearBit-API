@@ -8,7 +8,7 @@ export async function orderWebhookController(req: FastifyRequest, reply: Fastify
     const { event, payment } = req.body as WebhookInput
 
     if (event !== 'PAYMENT_RECEIVED') {
-        return reply.status(200)
+        return reply.status(200).send()
     }
 
     const status = payment.status

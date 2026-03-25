@@ -199,7 +199,7 @@ export async function googleCallbackController(
 
 
 
-    return reply.redirect('http://localhost:5173/')
+    return reply.redirect(`http://localhost:${env.PORT}`)
   } catch (error) {
     req.log.error({ err: error }, 'Erro no callback Google');
     return reply.code(500).send({ success: false, message: 'Erro interno.' });
